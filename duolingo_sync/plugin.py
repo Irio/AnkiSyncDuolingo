@@ -38,7 +38,7 @@ def sync_duolingo():
             login_thread = DuolingoThread(target=Duolingo, args=(username, password))
             login_thread.start()
             while login_thread.is_alive():
-                time.sleep(.02)
+                time.sleep(0.02)
                 mw.progress.update()
             lingo = login_thread.join()
 
@@ -46,7 +46,7 @@ def sync_duolingo():
             vocabulary_thread.start()
             mw.progress.update(label="Retrieving vocabulary...")
             while vocabulary_thread.is_alive():
-                time.sleep(.02)
+                time.sleep(0.02)
                 mw.progress.update()
             vocabulary_response = vocabulary_thread.join()
 

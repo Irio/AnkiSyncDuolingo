@@ -24,7 +24,7 @@ jobs:
         pip install -e ".[dev]"
     - name: Lint
       run: |
-        black --exclude=duolingo_sync/duolingo.py --check .
+        python3 -m black -t py38 --exclude=duolingo_sync/duolingo.py --check .
     - name: Test with pytest
       run: |
         pytest
