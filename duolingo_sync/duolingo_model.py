@@ -10,16 +10,16 @@ def create_model(mw):
 
     for field_name in _field_names:
         fm = mm.newField(_(field_name))
-        mm.addField(m, fm)  
+        mm.addField(m, fm)
 
     t = mm.newTemplate("Card 1")
-    t['qfmt'] = "{{Source}}<br>\n<br>\nTo {{Target Language}}:\n\n<hr id=answer>"
-    t['afmt'] = "{{FrontSide}}\n\n<br><br>{{Target}}"
+    t["qfmt"] = "{{Source}}<br>\n<br>\nTo {{Target Language}}:\n\n<hr id=answer>"
+    t["afmt"] = "{{FrontSide}}\n\n<br><br>{{Target}}"
     mm.addTemplate(m, t)
 
     t = mm.newTemplate("Card 2")
-    t['qfmt'] = "{{Target}}<br>\n<br>\nFrom {{Target Language}}:\n\n<hr id=answer>"
-    t['afmt'] = "{{FrontSide}}\n\n<br><br>{{Source}}"
+    t["qfmt"] = "{{Target}}<br>\n<br>\nFrom {{Target Language}}:\n\n<hr id=answer>"
+    t["afmt"] = "{{FrontSide}}\n\n<br><br>{{Source}}"
     mm.addTemplate(m, t)
 
     mm.add(m)
@@ -34,12 +34,20 @@ def get_duolingo_model(mw):
         m = create_model(mw)
 
     # Add new fields if they don't exist yet
-    fields_to_add = [field_name for field_name in _field_names if field_name not in mw.col.models.fieldNames(m)]
+    fields_to_add = [
+        field_name
+        for field_name in _field_names
+        if field_name not in mw.col.models.fieldNames(m)
+    ]
     if fields_to_add:
-        showInfo("""
+        showInfo(
+            """
         <p>The Duolingo Sync plugin has recently been upgraded to include the following attributes: {}</p>
         <p>This change will require a full-sync of your card database to your Anki-Web account.</p>
-        """.format(", ".join(fields_to_add)))
+        """.format(
+                ", ".join(fields_to_add)
+            )
+        )
         for field_name in fields_to_add:
             pass
             fm = mw.col.models.newField(_(field_name))
@@ -47,5 +55,3 @@ def get_duolingo_model(mw):
             mw.col.models.save(m)
 
     return m
-
-

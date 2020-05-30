@@ -6,5 +6,5 @@ setup(
     packages=["duolingo_sync"],
     license="MIT",
     long_description=open("README.md").read(),
-    extras_require={"dev": ["pytest", "pytest-cov"]},
+    extras_require={"dev": ["black", "pytest", "pytest-cov"]},
 )

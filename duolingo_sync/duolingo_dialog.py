@@ -6,7 +6,8 @@ def duolingo_dialog(mw):
     d.setWindowTitle("Pull from Duolingo")
     d.setWindowModality(Qt.WindowModal)
     vbox = QVBoxLayout()
-    l = QLabel("""
+    l = QLabel(
+        """
     <p>This plugin will make Anki notes and cards from the words you've learned in 
     your <strong>active</strong> Duolingo language. As you learn more words in Duolingo, use
     this tool again to pull those words into Anki.</p>
@@ -18,7 +19,8 @@ def duolingo_dialog(mw):
     <hr>
 
     <p>Please enter your <strong>Duolingo</strong> username and password.</p>
-    """)
+    """
+    )
     l.setOpenExternalLinks(True)
     l.setWordWrap(True)
     vbox.addWidget(l)

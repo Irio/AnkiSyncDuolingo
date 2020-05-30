@@ -21,8 +21,10 @@ def sync_duolingo():
         showWarning("Could not find or create Duolingo Sync note type.")
         return
 
-    note_ids = mw.col.findNotes('tag:duolingo_sync')
-    notes = mw.col.db.list("select flds from notes where id in {}".format(ids2str(note_ids)))
+    note_ids = mw.col.findNotes("tag:duolingo_sync")
+    notes = mw.col.db.list(
+        "select flds from notes where id in {}".format(ids2str(note_ids))
+    )
     gids_to_notes = {splitFields(note)[0]: note for note in notes}
     try:
         username, password = duolingo_dialog(mw)
@@ -65,55 +67,71 @@ def sync_duolingo():
             )
             return
         except requests.exceptions.ConnectionError:
-            showWarning("Could not connect to Duolingo. Please check your internet connection.")
+            showWarning(
+                "Could not connect to Duolingo. Please check your internet connection."
+            )
             return
         finally:
             mw.progress.finish()
 
-        language_string = vocabulary_response['language_string']
-        vocabs = vocabulary_response['vocab_overview']
+        language_string = vocabulary_response["language_string"]
+        vocabs = vocabulary_response["vocab_overview"]
 
         did = mw.col.decks.id("Default")
         mw.col.decks.select(did)
 
         deck = mw.col.decks.get(did)
-        deck['mid'] = model['id']
+        deck["mid"] = model["id"]
         mw.col.decks.save(deck)
 
-        words_to_add = [vocab for vocab in vocabs if vocab['id'] not in gids_to_notes]
+        words_to_add = [vocab for vocab in vocabs if vocab["id"] not in gids_to_notes]
 
         if not words_to_add:
-            showInfo("Successfully logged in to Duolingo, but no new words found in {} language.".format(language_string))
-        elif askUser("Add {} notes from {} language?".format(len(words_to_add), language_string)):
+            showInfo(
+                "Successfully logged in to Duolingo, but no new words found in {} language.".format(
+                    language_string
+                )
+            )
+        elif askUser(
+            "Add {} notes from {} language?".format(len(words_to_add), language_string)
+        ):
 
-            word_chunks = [words_to_add[x:x + 50] for x in range(0, len(words_to_add), 50)]
+            word_chunks = [
+                words_to_add[x : x + 50] for x in range(0, len(words_to_add), 50)
+            ]
 
-            mw.progress.start(immediate=True, label="Importing from Duolingo...", max=len(words_to_add))
+            mw.progress.start(
+                immediate=True,
+                label="Importing from Duolingo...",
+                max=len(words_to_add),
+            )
             notes_added = 0
             for word_chunk in word_chunks:
-                translations = lingo.get_translations([vocab['word_string'] for vocab in word_chunk])
+                translations = lingo.get_translations(
+                    [vocab["word_string"] for vocab in word_chunk]
+                )
 
                 for vocab in word_chunk:
-                    
+
                     n = mw.col.newNote()
-                    
-                    # Update the underlying dictionary to accept more arguments for more customisable cards 
+
+                    # Update the underlying dictionary to accept more arguments for more customisable cards
                     n._fmap = defaultdict(str, n._fmap)
 
-                    n['Gid'] = vocab['id']
-                    n['Gender'] = vocab['gender'] if vocab['gender'] else ''
-                    n['Source'] = '; '.join(translations[vocab['word_string']])
-                    n['Target'] = vocab['word_string']
-                    n['Pronunciation'] = vocab['normalized_string'].strip()
-                    n['Target Language'] = language_string
+                    n["Gid"] = vocab["id"]
+                    n["Gender"] = vocab["gender"] if vocab["gender"] else ""
+                    n["Source"] = "; ".join(translations[vocab["word_string"]])
+                    n["Target"] = vocab["word_string"]
+                    n["Pronunciation"] = vocab["normalized_string"].strip()
+                    n["Target Language"] = language_string
                     n.addTag(language_string)
-                    n.addTag('duolingo_sync')
+                    n.addTag("duolingo_sync")
 
-                    if vocab['pos']:
-                        n.addTag(vocab['pos'])
+                    if vocab["pos"]:
+                        n.addTag(vocab["pos"])
 
-                    if vocab['skill']:
-                        n.addTag(vocab['skill'].replace(" ", "-"))
+                    if vocab["skill"]:
+                        n.addTag(vocab["skill"].replace(" ", "-"))
 
                     mw.col.addNote(n)
                     notes_added += 1
@@ -125,8 +143,7 @@ def sync_duolingo():
 
             mw.progress.finish()
 
+
 action = QAction("Pull from Duolingo", mw)
 action.triggered.connect(sync_duolingo)
 mw.form.menuTools.addAction(action)
-
-
